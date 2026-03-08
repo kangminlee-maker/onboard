@@ -14,6 +14,12 @@ Check if `CLAUDE.md` exists in the project root.
 
 Ask the user the following questions using AskUserQuestion. Do NOT skip this phase. Do NOT guess answers.
 
+### Process Guidelines
+- Even when only one option exists, present it and confirm with the user before applying.
+- Show all auto-detected information transparently. Do not hide or filter scan results.
+- Present risks alongside each option at decision time, not in a separate section after decisions.
+- For pure technical decisions: present pros/cons with a recommendation, then let the user decide.
+
 ### Required Questions
 
 1. **Project overview**: "What does this project do? (1-2 sentences)"
@@ -102,6 +108,47 @@ On **Update** mode: only overwrite content between `<!-- auto:* -->` markers. Pr
 
 {user's answer to project overview question}
 
+## User Communication
+
+사용자는 제품/도메인 전문가이며 개발 비전문가. 빠른 결정, 철저한 검증. 간결함 선호.
+
+### 소통 규칙
+- 기술 용어 유지 + 설명 첨부. 쉬운 말로 대체 금지.
+- 학술적/현학적 용어 지양. 쉬운 말로 같은 정확성 달성.
+- 비유/은유 금지. 직접 설명.
+- 리스크는 선택 시점에 제시. 결정 후 추가 리스크 금지.
+- 선택지가 하나뿐이어도 사용자에게 확인. 자동 적용 금지.
+- 순수 기술 결정: Builder 소관이지만, 장단점 + 추천 안내.
+- 시스템이 아는 모든 정보 제공. 정보와 결정을 구분.
+- 이름은 역할 기준. 실제로 일어나는 일을 반영.
+- 의미의 정확성 > 편의성. 기존 용어 의미 확장 금지, 정확한 새 개념 추가.
+- 복잡도 = 통제 가능성. 크기가 아님.
+- 문서를 위한 문서 금지. 기존 문서에 간결 포함.
+- 전역 규칙은 model-independent 위치(README.md 등)에 배치.
+- 행위 주체는 설계 원칙에서 도출. 원칙에서 논리적으로 추론.
+
+### 작업 방식
+- 주요 결정마다 병렬 에이전트 리뷰 (6인).
+- 2라운드 구조: Round 1 독립 리뷰 → 종합 → Round 2 재응답.
+- 리뷰 기준: 목적·철학·persona 정합성 우선. 단순 오류 검출보다 상위.
+- 전문가 만장일치도 근거 약하면 재검토. 합의 자체가 아니라 합의의 논리를 평가.
+- 결정은 빠르게, 검증은 철저하게.
+- 커밋은 의미 있는 작업 단위로.
+- 상위설계: 레거시 무관. 세부구현: 레거시 참고 (실패 반복 방지).
+- 좋은 이름이 떠오르지 않으면 기존 이름 유지.
+
+### Anti-Patterns (X → O)
+| 하지 말 것 | 해야 할 것 |
+|-----------|-----------|
+| 기술 용어를 쉬운 말로 대체 | 용어 유지 + 설명 첨부 |
+| 학술적 용어로 정확성 추구 | 쉬운 말로 같은 정확성 달성 |
+| 별도 문서로 원칙을 장황하게 서술 | 기존 문서에 간결 포함 |
+| model-dependent 위치에 전역 규칙 배치 | model-independent 위치에 배치 |
+| 리스크를 결정 후 별도 섹션에 제시 | 선택 시점에 각 선택지 리스크 제시 |
+| 전문가 만장일치를 무비판적 수용 | 합의 근거를 별도 검증 |
+| "파급범위가 크다"로 차선책 선택 | "통제 가능한 복잡도인가" 기준 |
+| 편의를 위해 기존 용어 의미 확장 | 의미가 정확한 새 개념 추가 |
+
 ## Tech Stack
 
 <!-- auto:tech-stack -->
@@ -159,6 +206,30 @@ Answer explicitly before finalizing:
 ## Parallel Work
 
 Subagents for clean context windows. One agent per file. For parallel streams: `git worktree add .claude/worktrees/<n> origin/main`
+
+## Available Commands & Agents
+
+### Individual Expert (`/ask-{agent}`)
+단일 전문가 관점 상담. 각 에이전트가 자신의 전문 영역에서 답변.
+
+| Command | Role |
+|---------|------|
+| `/ask-philosopher` | 시스템 목적·철학 정합성 |
+| `/ask-ux_expert` | 사용자 경험 |
+| `/ask-systems_architect` | 시스템 아키텍처 |
+| `/ask-product_engineer` | 제품 엔지니어링 |
+| `/ask-reliability_engineer` | 신뢰성 엔지니어링 |
+| `/ask-integration_engineer` | 통합·연동 |
+
+### Team Review (`/ask-review`)
+6인 에이전트 패널 리뷰. 5인 독립 리뷰 → Philosopher 종합 → 5인 재응답 → 최종 합의.
+
+### Multi-Agent Analysis (Prism)
+| Command | Purpose |
+|---------|---------|
+| `/prism:plan` | 다각도 분석 → Devil's Advocate 검증 → 3인 위원회 토론 → 실행 계획 |
+| `/prism:prd` | PRD를 정책 문서 대비 충돌·모호성 분석 |
+| `/prism:incident` | 인시던트 포스트모템. 동적 관점 → DA 검증 → Tribunal |
 
 ## Prohibitions
 
