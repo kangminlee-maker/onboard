@@ -1,0 +1,7 @@
+{
+  "name": "onboard",
+  "description": "Set up or update Claude Code project settings (CLAUDE.md, coding conventions, project patterns) for the current repository.",
+  "author": {
+    "name": "kangmin"
+  }
+}

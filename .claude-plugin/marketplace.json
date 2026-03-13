@@ -1,0 +1,13 @@
+{
+  "name": "onboard",
+  "owner": {
+    "name": "kangmin"
+  },
+  "plugins": [
+    {
+      "name": "onboard",
+      "source": ".",
+      "description": "Set up or update Claude Code project settings (CLAUDE.md, coding conventions, project patterns) for the current repository."
+    }
+  ]
+}
