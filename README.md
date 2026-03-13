@@ -1,4 +1,4 @@
-# claudecode-settings
+# Onboard
 
 Claude Code project onboarding command. Sets up `CLAUDE.md` and `.claude/rules/` for any repository.
 
