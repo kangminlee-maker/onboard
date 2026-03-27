@@ -75,7 +75,13 @@ Scan the project and collect the following. If the repo is empty (no source file
 - Run `git branch --show-current` or check `git remote show origin`
 - Result: branch name (default: `main`)
 
-### 2.8 Code Style Summary
+### 2.8 Global Parallel Work Protocol
+- Check if `~/.claude/CLAUDE.md` exists and contains a `## Parallel Work Protocol` section
+- If found: note that the global protocol is active (Agent Teams 기반). CLAUDE.md 템플릿에서 글로벌 설정과 동기화 확인.
+- If NOT found: flag as missing — recommend adding to `~/.claude/CLAUDE.md` (Agent Teams 기반 프로토콜이 프로젝트 CLAUDE.md에는 포함되지만, 글로벌 적용을 위해 추가 권장)
+- Result: `present` or `missing` (with recommendation)
+
+### 2.9 Code Style Summary
 - For the detected primary programming language, derive specific conventions:
   - **TypeScript**: type vs interface, enum policy, assertion policy, function style
   - **Python**: type hints policy, docstring style, import style
@@ -205,7 +211,22 @@ Answer explicitly before finalizing:
 
 ## Parallel Work
 
-Subagents for clean context windows. One agent per file. For parallel streams: `git worktree add .claude/worktrees/<n> origin/main`
+<!-- auto:parallel-work -->
+### 기본: Agent Teams 기반 프로토콜
+
+병렬 수정 작업 시 Agent Teams를 사용한다.
+
+1. **사전 파일 충돌 분석**: 작업 분배 전, 각 에이전트가 수정할 파일 목록을 식별하고 겹치는 파일을 찾는다.
+2. **독립 파일**: 병렬 실행 (TaskCreate, 동시 시작)
+3. **공유 파일**: 순차 실행 (TaskCreate with blockedBy). "큰 작업 먼저" — 작업량이 큰 에이전트가 공유 파일을 먼저 수정.
+4. **Agent Teams 사용**: TeamCreate → TaskCreate(blockedBy) → 에이전트 spawn → TaskList로 작업 확인 → TaskUpdate로 완료 보고
+
+### Fallback: Worktree 격리
+
+Agent Teams를 사용할 수 없는 환경에서는 git worktree로 물리적 격리:
+- One agent per file. `git worktree add .claude/worktrees/<n> origin/main`
+- 작업 완료 후 수동 merge 필요
+<!-- /auto:parallel-work -->
 
 ## Available Commands & Agents
 
@@ -406,6 +427,7 @@ After generating all files, output a summary:
 - Verify: {value}
 - Naming: {value}
 - Branch: {value}
+- Parallel Work Protocol: {present in global / missing — recommendation shown}
 
 ### From User Input
 - Overview: {provided / skipped}
